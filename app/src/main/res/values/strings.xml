@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">UmbrellaAlarm</string>
+    <string name="et_address_hint">주소를 입력해 주세요.</string>
+
+</resources>
