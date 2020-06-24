@@ -1,14 +1,15 @@
 package com.cnm.umbrellaalarm.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.cnm.umbrellaalarm.R
 import com.cnm.umbrellaalarm.data.model.NaverGeocodeResponse
-import kotlinx.android.synthetic.main.item_address.view.*
+import com.cnm.umbrellaalarm.databinding.ItemAddressBinding
 
-class AddressAdapter(private val onClickAction: (NaverGeocodeResponse.Addresse) -> Unit) : RecyclerView.Adapter<AddressAdapter.AddressViewHolder>() {
+class AddressAdapter(private val onClickAction: (NaverGeocodeResponse.Addresse) -> Unit) :
+    RecyclerView.Adapter<AddressAdapter.AddressViewHolder>() {
     private val items = mutableListOf<NaverGeocodeResponse.Addresse>()
 
     fun setItem(list: List<NaverGeocodeResponse.Addresse>) {
@@ -18,8 +19,13 @@ class AddressAdapter(private val onClickAction: (NaverGeocodeResponse.Addresse) 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddressViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_address, parent, false)
-        return AddressViewHolder(view)
+        val binding = DataBindingUtil.inflate<ItemAddressBinding>(
+            LayoutInflater.from(parent.context),
+            R.layout.item_address,
+            parent,
+            false
+        )
+        return AddressViewHolder(binding)
     }
 
     override fun getItemCount(): Int {
@@ -30,16 +36,16 @@ class AddressAdapter(private val onClickAction: (NaverGeocodeResponse.Addresse) 
         holder.bind(items[position])
     }
 
-    inner class AddressViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class AddressViewHolder(private val binding: ItemAddressBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         init {
-            view.setOnClickListener {
+            binding.root.setOnClickListener {
                 val item = items[adapterPosition]
                 onClickAction(item)
             }
         }
-            fun bind(item: NaverGeocodeResponse.Addresse) {
-                itemView.tv_road_name.text = item.roadAddress
-                itemView.tv_number_name.text = item.jibunAddress
-            }
+        fun bind(item: NaverGeocodeResponse.Addresse) {
+            binding.items = item
+        }
     }
 }

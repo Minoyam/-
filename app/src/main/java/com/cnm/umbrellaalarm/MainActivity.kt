@@ -1,17 +1,23 @@
 package com.cnm.umbrellaalarm
 
 import android.app.Activity
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import com.cnm.umbrellaalarm.data.repository.RepositoryImpl
 import com.cnm.umbrellaalarm.data.source.local.LocalDataSourceImpl
 import com.cnm.umbrellaalarm.data.source.local.db.WeatherDao
 import com.cnm.umbrellaalarm.data.source.local.db.WeatherDataBase
 import com.cnm.umbrellaalarm.data.source.remote.RemoteDataSourceImpl
+import com.cnm.umbrellaalarm.databinding.ActivityMainBinding
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {
@@ -25,10 +31,15 @@ class MainActivity : AppCompatActivity() {
     }
     private val disposable = CompositeDisposable()
 
+    private val binding by lazy {
+        DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        if (tv_address.text.isEmpty()) {
+        binding.lifecycleOwner = this@MainActivity
+        binding.ac = this
+        if (binding.tvAddress.text.isEmpty()) {
             val r = Runnable {
                 weatherDao.loadLocal().apply {
                     searchWeather(this.address, this.latitude, this.longitude)
@@ -37,10 +48,42 @@ class MainActivity : AppCompatActivity() {
             val thread = Thread(r)
             thread.start()
         }
-        tv_address.setOnClickListener {
-            val intent = Intent(this, AddressActivity::class.java)
-            startActivityForResult(intent, 1001)
+    }
+
+    fun moveAddress() {
+        val intent = Intent(this, AddressActivity::class.java)
+        startActivityForResult(intent, 1001)
+    }
+
+    fun notiReservation() {
+        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+        val alarmIntent = Intent(this, AlarmReceiver::class.java)  // 1
+        val pendingIntent = PendingIntent.getBroadcast(     // 2
+            this, AlarmReceiver.NOTIFICATION_ID, alarmIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val calendar: Calendar
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            calendar = Calendar.getInstance().apply {
+                timeInMillis = System.currentTimeMillis()
+                set(Calendar.HOUR_OF_DAY, binding.tpReservation.hour)
+                set(Calendar.MINUTE, binding.tpReservation.minute)
+            }
+        } else {
+            calendar = Calendar.getInstance().apply {
+                timeInMillis = System.currentTimeMillis()
+                set(Calendar.HOUR_OF_DAY, binding.tpReservation.currentHour)
+                set(Calendar.MINUTE, binding.tpReservation.currentMinute)
+            }
         }
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
+            pendingIntent
+        )
+         Toast.makeText(this,"알람 예약 완료",Toast.LENGTH_LONG).show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -69,24 +112,23 @@ class MainActivity : AppCompatActivity() {
                         runOnUiThread {
                             when (currentWeather) {
                                 "Clear" -> {
-                                    iv_weather.setImageResource(R.drawable.ic_clear)
+                                    binding.ivWeather.setImageResource(R.drawable.ic_clear)
                                 }
                                 "Clouds" -> {
-                                    iv_weather.setImageResource(R.drawable.ic_cloud)
+                                    binding.ivWeather.setImageResource(R.drawable.ic_cloud)
                                 }
                                 "Snow" -> {
-                                    iv_weather.setImageResource(R.drawable.ic_snow)
+                                    binding.ivWeather.setImageResource(R.drawable.ic_snow)
                                 }
                                 "Rain", "Drizzle", "Thunderstorm" -> {
-                                    iv_weather.setImageResource(R.drawable.ic_rain)
+                                    binding.ivWeather.setImageResource(R.drawable.ic_rain)
                                 }
                                 else -> {
-                                    iv_weather.setImageResource(R.drawable.ic_fog)
+                                    binding.ivWeather.setImageResource(R.drawable.ic_fog)
                                 }
                             }
-                            tv_address.text = roadName
-                            tv_temp.text = temp.toString()
-                            tv_do.text = "도"
+                            binding.tvAddress.text = roadName
+                            binding.tvTemp.text = temp.toString() + "도"
                         }
                     }
                     val thread = Thread(r)
@@ -106,6 +148,8 @@ class MainActivity : AppCompatActivity() {
                 )
         )
     }
+
+
 }
 
 

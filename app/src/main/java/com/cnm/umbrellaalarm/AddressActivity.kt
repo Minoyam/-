@@ -4,8 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cnm.umbrellaalarm.adapter.AddressAdapter
 import com.cnm.umbrellaalarm.data.model.NaverGeocodeResponse
@@ -14,9 +14,8 @@ import com.cnm.umbrellaalarm.data.source.local.LocalDataSourceImpl
 import com.cnm.umbrellaalarm.data.source.local.db.WeatherDao
 import com.cnm.umbrellaalarm.data.source.local.db.WeatherDataBase
 import com.cnm.umbrellaalarm.data.source.remote.RemoteDataSourceImpl
+import com.cnm.umbrellaalarm.databinding.ActivityAddressBinding
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.activity_address.*
-
 
 class AddressActivity : AppCompatActivity() {
     private val disposable = CompositeDisposable()
@@ -29,29 +28,25 @@ class AddressActivity : AppCompatActivity() {
     }
     private val addressAdapter = AddressAdapter(::selectAddress)
 
+    private val binding by lazy {
+        DataBindingUtil.setContentView<ActivityAddressBinding>(this,R.layout.activity_address)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_address)
-        rv_address_content.apply {
-            adapter = addressAdapter
-            layoutManager = LinearLayoutManager(this@AddressActivity)
-        }
-        et_address.setOnEditorActionListener { _, i, _ ->
-            when (i) {
-                EditorInfo.IME_ACTION_SEARCH -> {
-                    searchAddress()
-                }
+        with(binding)
+        {
+            rvAddressContent.apply {
+                adapter = addressAdapter
+                layoutManager = LinearLayoutManager(this@AddressActivity)
             }
-            true
-        }
-        bt_address.setOnClickListener {
-            searchAddress()
+            lifecycleOwner = this@AddressActivity
+            ac = this@AddressActivity
         }
     }
 
-    private fun searchAddress() {
+    fun searchAddress() {
         disposable.add(
-            repositoryImpl.getAddress(et_address.text.toString())
+            repositoryImpl.getAddress(binding.etAddress.text.toString())
                 .subscribe({
                     val r = Runnable {
                         runOnUiThread {
