@@ -4,9 +4,6 @@
 
     <!--bold-->
     <font
-            android:font="@font/bmjua"
-            android:fontStyle="normal"
-            android:fontWeight="700"
             app:font="@font/bmjua"
             app:fontStyle="normal"
             app:fontWeight="1000" />

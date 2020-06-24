@@ -24,6 +24,9 @@
         </activity>
         <activity android:name=".AddressActivity" />
 
+        <receiver
+                android:name=".AlarmReceiver"
+                android:exported="false" />
     </application>
 
 </manifest>
