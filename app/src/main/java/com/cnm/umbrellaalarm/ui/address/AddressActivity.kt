@@ -1,12 +1,16 @@
-package com.cnm.umbrellaalarm
+package com.cnm.umbrellaalarm.ui.address
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.cnm.umbrellaalarm.R
 import com.cnm.umbrellaalarm.adapter.AddressAdapter
 import com.cnm.umbrellaalarm.data.model.NaverGeocodeResponse
 import com.cnm.umbrellaalarm.data.repository.RepositoryImpl
@@ -18,21 +22,30 @@ import com.cnm.umbrellaalarm.databinding.ActivityAddressBinding
 import io.reactivex.disposables.CompositeDisposable
 
 class AddressActivity : AppCompatActivity() {
-    private val disposable = CompositeDisposable()
     private val weatherDao: WeatherDao by lazy {
         val db = WeatherDataBase.getInstance(this)!!
         db.weatherDao()
     }
-    private val repositoryImpl: RepositoryImpl by lazy {
-        RepositoryImpl(RemoteDataSourceImpl(),LocalDataSourceImpl(weatherDao))
+    private val addressViewModel : AddressViewModel by viewModels {
+           object :  ViewModelProvider.Factory {
+               override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                   return AddressViewModel(weatherDao) as T
+               }
+           }
     }
     private val addressAdapter = AddressAdapter(::selectAddress)
 
     private val binding by lazy {
-        DataBindingUtil.setContentView<ActivityAddressBinding>(this,R.layout.activity_address)
+        DataBindingUtil.setContentView<ActivityAddressBinding>(this,
+            R.layout.activity_address
+        )
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initActivity()
+    }
+
+    private fun initActivity() {
         with(binding)
         {
             rvAddressContent.apply {
@@ -40,32 +53,10 @@ class AddressActivity : AppCompatActivity() {
                 layoutManager = LinearLayoutManager(this@AddressActivity)
             }
             lifecycleOwner = this@AddressActivity
-            ac = this@AddressActivity
+            vm = addressViewModel
         }
     }
 
-    fun searchAddress() {
-        disposable.add(
-            repositoryImpl.getAddress(binding.etAddress.text.toString())
-                .subscribe({
-                    val r = Runnable {
-                        runOnUiThread {
-                            addressAdapter.setItem(it.addresses)
-                        }
-                    }
-                    val thread = Thread(r)
-                    thread.start()
-
-                }, {
-                    Log.e("disposable", it.message.toString())
-                })
-        )
-    }
-
-    override fun onDestroy() {
-        disposable.dispose()
-        super.onDestroy()
-    }
     private fun selectAddress(item : NaverGeocodeResponse.Addresse)
     {
         val intent = Intent()

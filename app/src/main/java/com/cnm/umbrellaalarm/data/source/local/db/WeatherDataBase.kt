@@ -5,7 +5,6 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.cnm.umbrellaalarm.MainActivity
 
 @Database(entities = [WeatherEntity::class], version = 1, exportSchema = false)
 abstract class WeatherDataBase : RoomDatabase() {

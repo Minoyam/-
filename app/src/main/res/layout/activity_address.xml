@@ -6,8 +6,8 @@
     <data>
 
         <variable
-                name="ac"
-                type="com.cnm.umbrellaalarm.AddressActivity" />
+                name="vm"
+                type="com.cnm.umbrellaalarm.ui.address.AddressViewModel" />
     </data>
 
     <LinearLayout
@@ -28,14 +28,15 @@
                     android:hint="@string/et_address_hint"
                     android:imeOptions="actionSearch"
                     android:inputType="text"
-                    bind:bindOnEditorActionListener="@{() -> ac.searchAddress()}" />
+                    android:text="@={vm.searchString}"
+                    bind:bindOnEditorActionListener="@{() -> vm.searchAddress()}" />
 
             <Button
                     android:id="@+id/bt_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:onClick="@{() -> ac.searchAddress()}"
+                    android:onClick="@{() -> vm.searchAddress()}"
                     android:text="검색"
                     android:textSize="18sp" />
         </LinearLayout>
@@ -49,6 +50,7 @@
                 android:id="@+id/rv_address_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                bind:bindSetAddressItem="@{vm.geocodeItem}"
                 android:layout_marginTop="8dp" />
     </LinearLayout>
 </layout>
