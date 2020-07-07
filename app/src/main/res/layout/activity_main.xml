@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:bind="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
+        <import type="android.view.View" />
+
         <variable
-                name="ac"
-                type="com.cnm.umbrellaalarm.MainActivity" />
+                name="vm"
+                type="com.cnm.umbrellaalarm.ui.main.MainViewModel" />
     </data>
+
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -18,9 +23,11 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="50dp"
+                android:onClick="@{() -> vm.moveAddress()}"
+                android:text="@{vm.addressName}"
                 android:textSize="25sp"
-                android:onClick="@{() -> ac.moveAddress()}"
                 android:textStyle="bold"
+                android:visibility="@{vm.weatherItem.size() != 0 ? View.VISIBLE : View.GONE}"
                 tools:text="서울 송파구 삼전동" />
 
         <ImageView
@@ -29,6 +36,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="50dp"
+                android:visibility="@{vm.weatherItem.size() != 0 ? View.VISIBLE : View.GONE}"
+                bind:bindSetImage="@{vm.weatherItem[0]}"
                 tools:src="@drawable/ic_launcher_foreground" />
 
         <LinearLayout
@@ -45,6 +54,8 @@
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textSize="60sp"
                     android:textStyle="bold"
+                    android:visibility="@{vm.weatherItem.size() != 0 ? View.VISIBLE : View.GONE}"
+                    bind:bindSetTemp="@{vm.weatherItem[0]}"
                     tools:text="19" />
 
         </LinearLayout>
@@ -59,7 +70,6 @@
 
         <Button
                 android:id="@+id/bt_reservation"
-                android:onClick="@{() -> ac.notiReservation()}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="예약하기" />
