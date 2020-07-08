@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun notiReservation() {
-        val alarmIntent = Intent(this, AlarmReceiver::class.java)  // 1
+        val alarmIntent = Intent(this, AlarmReceiver::class.java)
         val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
         val pendingIntent = PendingIntent.getBroadcast(
             this,

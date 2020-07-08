@@ -107,7 +107,7 @@ class AlarmService : Service() {
             NotificationCompat.Builder(context,
                 PRIMARY_CHANNEL_ID
             )
-                .setSmallIcon(R.drawable.ic_fog)
+                .setSmallIcon(R.drawable.ic_umbrella)
                 .setContentTitle("우산알리미")
                 .setContentText(text)
                 .setContentIntent(contentPendingIntent)
