@@ -16,7 +16,9 @@
             android:roundIcon="@mipmap/ic_ic_umbrella_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name=".ui.main.MainActivity">
+        <activity
+                android:name=".ui.main.MainActivity"
+                android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -34,8 +36,7 @@
         </receiver>
         <service
                 android:name=".receiver.AlarmService"
-                android:enabled="true"
-                />
+                android:enabled="true" />
     </application>
 
 </manifest>

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">UmbrellaAlarm</string>
+    <string name="app_name">"우산 알리미"</string>
     <string name="et_address_hint">주소를 입력해 주세요.</string>
     <string name="tv_temp">%s도</string>
 </resources>

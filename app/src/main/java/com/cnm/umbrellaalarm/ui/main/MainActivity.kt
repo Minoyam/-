@@ -24,6 +24,7 @@ import com.cnm.umbrellaalarm.ui.address.AddressActivity
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
+    private val time = mutableListOf<Long>()
 
     private val weatherDao: WeatherDao by lazy {
         val db = WeatherDataBase.getInstance(this)!!
@@ -70,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    fun notiReservation() {
+    private fun notiReservation() {
         val alarmIntent = Intent(this, AlarmReceiver::class.java)
         val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
         val pendingIntent = PendingIntent.getBroadcast(
@@ -122,5 +123,17 @@ class MainActivity : AppCompatActivity() {
                 loadWeather()
             }
         }
+    }
+
+    override fun onBackPressed() {
+        time.add(System.currentTimeMillis())
+        Toast.makeText(this, "뒤로가기를 한번 더 누르시면 종료됩니다.", Toast.LENGTH_LONG).show()
+        if (time.size >= 2) {
+            if (time[1] - time[0] <= 2000) {
+                super.onBackPressed()
+            }
+            time.clear()
+        }
+
     }
 }
