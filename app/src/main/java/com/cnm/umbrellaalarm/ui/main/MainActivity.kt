@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +19,7 @@ import com.cnm.umbrellaalarm.data.source.local.db.WeatherDao
 import com.cnm.umbrellaalarm.data.source.local.db.WeatherDataBase
 import com.cnm.umbrellaalarm.databinding.ActivityMainBinding
 import com.cnm.umbrellaalarm.receiver.AlarmReceiver
+import com.cnm.umbrellaalarm.receiver.AlarmService
 import com.cnm.umbrellaalarm.ui.address.AddressActivity
 import java.util.*
 
@@ -45,7 +47,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         initActivity()
         moveAddress()
+        binding.btReservation.setOnClickListener { notiReservation() }
     }
+
 
     private fun loadWeather() {
         val r = Runnable {
@@ -67,11 +71,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun notiReservation() {
-        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
         val alarmIntent = Intent(this, AlarmReceiver::class.java)  // 1
-        val pendingIntent = PendingIntent.getBroadcast(     // 2
+        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+        val pendingIntent = PendingIntent.getBroadcast(
             this,
-            AlarmReceiver.NOTIFICATION_ID, alarmIntent,
+            AlarmService.NOTIFICATION_ID, alarmIntent,
             PendingIntent.FLAG_UPDATE_CURRENT
         )
 
