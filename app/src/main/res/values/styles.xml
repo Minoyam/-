@@ -13,10 +13,14 @@
         <item name="android:textViewStyle">@style/customTextViewFontStyle</item>
         <item name="android:buttonStyle">@style/customButtonFontStyle</item>
         <item name="android:editTextStyle">@style/customEditTextFontStyle</item>
-
-
-
     </style>
+        <!--splash-->
+        <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+            <item name="android:windowBackground">@drawable/sp_logo</item>
+        </style>
+
+
+
 
 
 </resources>

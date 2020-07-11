@@ -105,7 +105,6 @@ class AlarmService : Service() {
                 PRIMARY_CHANNEL_ID
             )
                 .setSmallIcon(R.drawable.ic_umbrella)
-                .setContentTitle("오늘비와")
                 .setContentText(text)
                 .setContentIntent(contentPendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
