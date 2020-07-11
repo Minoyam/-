@@ -1,6 +1,5 @@
 package com.cnm.umbrellaalarm.data.source.remote.network.weather
 
-import com.cnm.umbrellaalarm.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -10,11 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 object WeatherNetworkHelper {
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(HttpLoggingInterceptor().apply {
-            level = if (BuildConfig.DEBUG) {
-                HttpLoggingInterceptor.Level.BODY
-            } else {
-                HttpLoggingInterceptor.Level.NONE
-            }
+            level = HttpLoggingInterceptor.Level.NONE
         })
         .addInterceptor {
             val request = it.request()
@@ -31,6 +26,6 @@ object WeatherNetworkHelper {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    val weatherApi = retrofit.create(
+    val weatherApi: WeatherApi = retrofit.create(
         WeatherApi::class.java)
 }

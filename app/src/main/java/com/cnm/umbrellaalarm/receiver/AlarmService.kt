@@ -17,7 +17,6 @@ import com.cnm.umbrellaalarm.data.source.local.db.WeatherDataBase
 import com.cnm.umbrellaalarm.data.source.remote.RemoteDataSourceImpl
 import com.cnm.umbrellaalarm.ui.main.MainActivity
 import io.reactivex.disposables.CompositeDisposable
-import java.util.*
 
 class AlarmService : Service() {
 
@@ -60,20 +59,18 @@ class AlarmService : Service() {
                         var isSun = true
                         for(i in 0..15){
                             if(item[i].weather[0].main == "Rain"){
-                                val time = item[i].dt * 1000L
-                                deliverNotification(this, "${Date(time)}에 비가옵니다.")
+                                deliverNotification(this, "오늘 비와. 우산챙기세요.")
                                 isSun = false
                                 break
                             }
                             else if(item[i].weather[0].main == "Snow"){
-                                val time = item[i].dt * 1000L
-                                deliverNotification(this, "${Date(time)}에 눈이옵니다.")
+                                deliverNotification(this, "오늘 눈와. 우산챙기세요.")
                                 isSun = false
                                 break
                             }
                         }
                         if(isSun){
-                            deliverNotification(this, "오늘은 우산 필요없습니다.")
+                            deliverNotification(this, "오늘 안와. 우산없어도돼요.")
                         }
 
                     }, {
@@ -108,7 +105,7 @@ class AlarmService : Service() {
                 PRIMARY_CHANNEL_ID
             )
                 .setSmallIcon(R.drawable.ic_umbrella)
-                .setContentTitle("우산알리미")
+                .setContentTitle("오늘비와")
                 .setContentText(text)
                 .setContentIntent(contentPendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)

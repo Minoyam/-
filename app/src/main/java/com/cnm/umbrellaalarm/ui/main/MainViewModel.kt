@@ -23,6 +23,7 @@ class MainViewModel(private val weatherDao: WeatherDao) : ViewModel() {
 
     val weatherItem = MutableLiveData<List<WeatherResponse>>()
     val addressName = MutableLiveData<String>()
+    val toastString = MutableLiveData<String>()
     val isMoveAddress = MutableLiveData<Boolean>()
     fun loadLocal(): WeatherEntity = weatherDao.loadLocal()
 
@@ -30,8 +31,13 @@ class MainViewModel(private val weatherDao: WeatherDao) : ViewModel() {
         disposable.add(
             repositoryImpl.getWeather(roadName, "daily", latitude, longitude)
                 .subscribe({
-                    setItem(it)
-                    setAddress(roadName)
+                    if(it != null) {
+                        setItem(it)
+                        setAddress(roadName)
+                    }
+                    else{
+                        toastString.value = "검색 결과가 없습니다."
+                    }
                 }, {
                     Log.e("disposable", it.message.toString())
                     weatherItem.value = null

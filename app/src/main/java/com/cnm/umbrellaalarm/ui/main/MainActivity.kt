@@ -48,6 +48,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         initActivity()
         moveAddress()
+        changedCallback()
         binding.btReservation.setOnClickListener { notiReservation() }
     }
 
@@ -100,7 +101,7 @@ class MainActivity : AppCompatActivity() {
             AlarmManager.INTERVAL_DAY,
             pendingIntent
         )
-        Toast.makeText(this, "알람 예약 완료", Toast.LENGTH_LONG).show()
+        showToast("알람 예약 완료")
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -124,10 +125,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
+    private fun showToast(msg: String) =
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+    private fun changedCallback() {
+        viewModel.toastString.observe(this@MainActivity, Observer {
+            showToast(it)
+        })
+    }
     override fun onBackPressed() {
         time.add(System.currentTimeMillis())
-        Toast.makeText(this, "뒤로가기를 한번 더 누르시면 종료됩니다.", Toast.LENGTH_LONG).show()
+        showToast("뒤로가기를 한번 더 누르시면 종료됩니다.")
         if (time.size >= 2) {
             if (time[1] - time[0] <= 2000) {
                 super.onBackPressed()

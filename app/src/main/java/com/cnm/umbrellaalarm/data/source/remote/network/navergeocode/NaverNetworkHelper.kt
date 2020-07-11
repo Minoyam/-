@@ -1,7 +1,5 @@
 package com.cnm.umbrellaalarm.data.source.remote.network.navergeocode
 
-import com.cnm.umbrellaalarm.BuildConfig
-import com.cnm.umbrellaalarm.data.model.NaverGeocodeResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -11,11 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 object NaverNetworkHelper {
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(HttpLoggingInterceptor().apply {
-            level = if (BuildConfig.DEBUG) {
-                HttpLoggingInterceptor.Level.BODY
-            } else {
-                HttpLoggingInterceptor.Level.NONE
-            }
+            level = HttpLoggingInterceptor.Level.NONE
         })
         .addInterceptor {
             val request = it.request()
@@ -33,5 +27,5 @@ object NaverNetworkHelper {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    val naverApi = retrofit.create(NaverApi::class.java)
+    val naverApi: NaverApi = retrofit.create(NaverApi::class.java)
 }
