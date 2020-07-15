@@ -22,6 +22,7 @@ class AddressViewModel (private val weatherDao: WeatherDao) : ViewModel(){
 
     val geocodeItem = MutableLiveData<List<NaverGeocodeResponse.Addresse>>()
     val searchString = MutableLiveData<String>()
+    val toastString = MutableLiveData<String>()
 
     fun searchAddress() {
         val query = searchString.value as String
@@ -29,7 +30,9 @@ class AddressViewModel (private val weatherDao: WeatherDao) : ViewModel(){
             disposable.add(
                 repositoryImpl.getAddress(query)
                     .subscribe({
-                            setItems(it.addresses)
+                        if(it.addresses.isEmpty())
+                            toastString.postValue("검색 결과가 없습니다.")
+                        setItems(it.addresses)
                     }, {
                         Log.e("disposable", it.message.toString())
                     })

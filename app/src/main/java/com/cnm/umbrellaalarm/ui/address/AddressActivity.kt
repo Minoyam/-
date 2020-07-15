@@ -4,9 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -43,6 +45,7 @@ class AddressActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initActivity()
+        changedCallback()
     }
 
     private fun initActivity() {
@@ -65,6 +68,13 @@ class AddressActivity : AppCompatActivity() {
         intent.putExtra("latitude",item.y)
         setResult(Activity.RESULT_OK, intent)
         finish()
+    }
+    private fun showToast(msg: String) =
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+    private fun changedCallback() {
+        addressViewModel.toastString.observe(this@AddressActivity, Observer {
+            showToast(it)
+        })
     }
 }
 

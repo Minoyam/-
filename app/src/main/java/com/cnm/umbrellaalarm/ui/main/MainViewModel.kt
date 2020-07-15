@@ -35,9 +35,6 @@ class MainViewModel(private val weatherDao: WeatherDao) : ViewModel() {
                         setItem(it)
                         setAddress(roadName)
                     }
-                    else{
-                        toastString.value = "검색 결과가 없습니다."
-                    }
                 }, {
                     Log.e("disposable", it.message.toString())
                     weatherItem.value = null
