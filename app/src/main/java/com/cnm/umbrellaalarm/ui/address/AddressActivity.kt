@@ -60,7 +60,7 @@ class AddressActivity : AppCompatActivity() {
     private fun selectAddress(item : NaverGeocodeResponse.Addresse)
     {
         val intent = Intent()
-        intent.putExtra("roadName",item.roadAddress)
+        intent.putExtra("roadName",item.jibunAddress)
         intent.putExtra("longitude",item.x)
         intent.putExtra("latitude",item.y)
         setResult(Activity.RESULT_OK, intent)

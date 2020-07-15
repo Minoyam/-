@@ -42,12 +42,6 @@ class AlarmService : Service() {
         TODO("Not yet implemented")
     }
 
-    override fun onCreate() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForeground(NOTIFICATION_ID, Notification.Builder(this).build())
-        }
-
-    }
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
         val r = Runnable {
@@ -101,7 +95,7 @@ class AlarmService : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT
         )
         val builder =
-            NotificationCompat.Builder(context,
+            NotificationCompat.Builder(this,
                 PRIMARY_CHANNEL_ID
             )
                 .setSmallIcon(R.drawable.ic_umbrella)
@@ -112,6 +106,8 @@ class AlarmService : Service() {
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel()
+            startForeground(NOTIFICATION_ID, builder.build())
+
         }
         notificationManager.notify(NOTIFICATION_ID, builder.build())
 
@@ -122,7 +118,7 @@ class AlarmService : Service() {
             val notificationChannel = NotificationChannel(
                 PRIMARY_CHANNEL_ID,
                 "UmbrellaAlarm",
-                NotificationManager.IMPORTANCE_HIGH
+                NotificationManager.IMPORTANCE_DEFAULT
             )
             notificationChannel.enableLights(true)
             notificationChannel.lightColor = Color.RED
