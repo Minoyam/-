@@ -1,6 +1,9 @@
 package com.cnm.umbrellaalarm.receiver
 
-import android.app.*
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -38,6 +41,7 @@ class AlarmService : Service() {
         const val NOTIFICATION_ID = 1
         const val PRIMARY_CHANNEL_ID = "primary_notification_channel"
     }
+
     override fun onBind(p0: Intent?): IBinder? {
         TODO("Not yet implemented")
     }
@@ -47,23 +51,27 @@ class AlarmService : Service() {
         val r = Runnable {
             val entity = weatherDao.loadLocal()
             disposable.add(
-                repositoryImpl.getWeather(entity.address, "daily", entity.latitude, entity.longitude)
+                repositoryImpl.getWeather(
+                    entity.address,
+                    "daily",
+                    entity.latitude,
+                    entity.longitude
+                )
                     .subscribe({
-                        val item : List<WeatherResponse.Hourly> = it.hourly
+                        val item: List<WeatherResponse.Hourly> = it.hourly
                         var isSun = true
-                        for(i in 0..15){
-                            if(item[i].weather[0].main == "Rain"){
+                        for (i in 0..15) {
+                            if (item[i].weather[0].main == "Rain") {
                                 deliverNotification(this, "오늘 비와. 우산챙기세요.")
                                 isSun = false
                                 break
-                            }
-                            else if(item[i].weather[0].main == "Snow"){
+                            } else if (item[i].weather[0].main == "Snow") {
                                 deliverNotification(this, "오늘 눈와. 우산챙기세요.")
                                 isSun = false
                                 break
                             }
                         }
-                        if(isSun){
+                        if (isSun) {
                             deliverNotification(this, "오늘 안와. 우산없어도돼요.")
                         }
 
@@ -83,7 +91,8 @@ class AlarmService : Service() {
         disposable.dispose()
         super.onDestroy()
     }
-    private fun deliverNotification(context: Context, text :String) {
+
+    private fun deliverNotification(context: Context, text: String) {
         notificationManager = this.getSystemService(
             Context.NOTIFICATION_SERVICE
         ) as NotificationManager
@@ -95,10 +104,14 @@ class AlarmService : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT
         )
         val builder =
-            NotificationCompat.Builder(this,
+            NotificationCompat.Builder(
+                this,
                 PRIMARY_CHANNEL_ID
             )
-                .setSmallIcon(R.drawable.ic_umbrella)
+                .setSmallIcon(
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) R.drawable.ic_stat_notification
+                    else R.drawable.ic_umbrella
+                )
                 .setContentText(text)
                 .setContentIntent(contentPendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
